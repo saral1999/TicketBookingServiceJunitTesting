@@ -1,26 +1,22 @@
 pipeline {
-    agent any
+    agent any 
     stages {
-        stage('git repo & clean') {
+        stage('Build') { 
             steps {
-               bat "rmdir  /s /q TicketBookingServiceJunitTesting"
-                bat "git clone https://github.com/kishancs2020/TicketBookingServiceJunitTesting.git"
-                bat "mvn clean -f TicketBookingServiceJunitTesting"
+                withMaven(maven : 'maven-plugin-3.16')
+                sh 'mvn compile'
             }
         }
-        stage('install') {
+        stage('Test') { 
             steps {
-                bat "mvn install -f TicketBookingServiceJunitTesting"
+                withMaven(maven : 'maven-plugin-3.16')
+                sh 'mvn test' 
             }
         }
-        stage('test') {
+        stage('Deploy') { 
             steps {
-                bat "mvn test -f TicketBookingServiceJunitTesting"
-            }
-        }
-        stage('package') {
-            steps {
-                bat "mvn package -f TicketBookingServiceJunitTesting"
+               withMaven(maven : 'maven-plugin-3.16')
+                sh 'mvn deploy'
             }
         }
     }
